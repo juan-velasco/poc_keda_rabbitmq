@@ -1,0 +1,24 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: consumer
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1         # Optional. Default: apps/v1
+    kind: Deployment                # Optional. Default: Deployment
+    name: consumer                # Mandatory. Must be in the same namespace as the ScaledObject
+  pollingInterval:  10                                      # Optional. Default: 30 seconds
+  cooldownPeriod:   30                                     # Optional. Default: 300 seconds
+  idleReplicaCount: 5                                       # Optional. Default: ignored, must be less than minReplicaCount
+  minReplicaCount:  6                                       # Optional. Default: 0
+  maxReplicaCount:  20                                     # Optional. Default: 100
+  triggers:
+  - type: rabbitmq
+    metadata:
+      host: amqp://admin:admin@rabbitmq.default.svc.cluster.local:5672 # Optional. If not specified, it must be done by using TriggerAuthentication.
+      protocol: auto # Optional. Specifies protocol to use, either amqp or http, or auto to autodetect based on the `host` value. Default value is auto.
+      mode: QueueLength # QueueLength or MessageRate
+      value: "50" # message backlog or publish/sec. target per instance
+      activationValue: "10" # Optional. Activation threshold
+      queueName: poc_keda
+      vhostName: / # Optional. If not specified, use the vhost in the `host` connection string. Required for Azure AD Workload Identity authorization (see bellow)

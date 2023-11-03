@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: producer
+  template:
+    metadata:
+      labels:
+        role: producer
+    spec:
+      containers:
+      - name: producer
+        imagePullPolicy: IfNotPresent
+        image: keda_poc_producer:1.0.0
+        env:
+        - name: RABBITMQ_HOST     
+          value: "rabbitmq"           
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "240m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"

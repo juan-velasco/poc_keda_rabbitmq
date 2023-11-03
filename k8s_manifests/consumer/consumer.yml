@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+spec:
+#  replicas: 5 # IMPORTANTE QUITAR ESTO...
+  selector:
+    matchLabels:
+      role: consumer
+  template:
+    metadata:
+      labels:
+        role: consumer
+    spec:
+      containers:
+      - name: consumer
+        imagePullPolicy: IfNotPresent
+        image: keda_poc_consumer:1.0.0
+        env:
+        - name: RABBITMQ_HOST     
+          value: "rabbitmq"              
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "240m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
